@@ -18,6 +18,7 @@
     --copper:#c9a35c;
     --text-muted:#7a7a7a;
     --white:#f2f1ee;
+    --electric-blue:#2f8fd1;
   }
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}
@@ -34,14 +35,16 @@
     -webkit-text-stroke:1px rgba(242,241,238,0.14);
     color:transparent;
   }
-  .glow-red{ background:radial-gradient(circle at center, rgba(156,28,28,0.22) 0%, transparent 70%); }
-  .glow-copper{ background:radial-gradient(circle at center, rgba(201,163,92,0.15) 0%, transparent 70%); }
+  .glow-red{ background:radial-gradient(circle at center, rgba(156,28,28,0.3) 0%, transparent 70%); }
+  .glow-copper{ background:radial-gradient(circle at center, rgba(201,163,92,0.2) 0%, transparent 70%); }
+  .glow-blue{ background:radial-gradient(circle at center, rgba(47,143,209,0.25) 0%, transparent 70%); }
   .hairline{border-color:var(--hairline);}
   .eyebrow{
     font-family:'JetBrains Mono',monospace;
     letter-spacing:0.3em;
     font-size:9px;
     color:var(--copper);
+    text-transform: uppercase;
   }
   @media (min-width:768px){ .eyebrow{ letter-spacing:0.35em; font-size:10px; } }
 
@@ -58,18 +61,34 @@
       linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
       linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
     background-size:32px 32px;
+    position: relative;
+  }
+  .blueprint-grid::after{
+    content:'';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, transparent 50%, rgba(0,0,0,0.1) 100%);
+    pointer-events: none;
   }
   @media (min-width:768px){ .blueprint-grid{ background-size:48px 48px; } }
 
   .spec-row{
     display:flex;justify-content:space-between;align-items:baseline;
     padding:12px 0;border-bottom:1px solid var(--hairline);
+    transition: all 0.3s ease;
+  }
+  .spec-row:hover{
+    padding-left: 8px;
+    padding-right: 8px;
+    border-left: 2px solid var(--copper);
+    border-right: 2px solid var(--red-guards);
   }
   .spec-row .label{
     font-family:'JetBrains Mono',monospace;
     font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-muted);
   }
-  .spec-row .value{font-weight:600;font-size:14px;}
+  .spec-row .value{font-weight:600;font-size:14px;transition: color 0.3s ease;}
+  .spec-row:hover .value{color: var(--copper);}
   @media (min-width:768px){
     .spec-row .label{font-size:10px;letter-spacing:0.2em;}
     .spec-row .value{font-size:15px;}
@@ -77,23 +96,69 @@
 
   .dial-needle{transform-origin:100px 100px;}
 
-  .btn-primary{ background:var(--white);color:#000; transition:all .35s cubic-bezier(.2,.8,.2,1); }
-  .btn-primary:hover{background:var(--red-guards);color:var(--white);}
-  .btn-ghost{ border:1px solid var(--hairline); color:var(--white); transition:all .3s ease; }
-  .btn-ghost:hover{ border-color:var(--white); background:rgba(255,255,255,0.06); }
-
-  ::-webkit-scrollbar{width:6px;}
-  ::-webkit-scrollbar-track{background:var(--black-base);}
-  ::-webkit-scrollbar-thumb{background:var(--red-guards);}
-
-  /* ---- Scroll progress bar ---- */
-  #scrollProgress{
-    position:fixed; top:0; left:0; height:3px; width:0%;
-    background:linear-gradient(90deg, var(--red-guards), var(--copper));
-    z-index:70;
+  .btn-primary{ 
+    background:var(--white);
+    color:#000;
+    transition:all .35s cubic-bezier(.2,.8,.2,1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+  .btn-primary::before{
+    content:'';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  .btn-primary:hover{
+    background:var(--red-guards);
+    color:var(--white);
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 24px 64px rgba(156,28,28,0.5);
+  }
+  .btn-primary:hover::before{
+    animation: shimmer 0.6s ease-in-out forwards;
+  }
+  @keyframes shimmer{
+    0%{ transform: translateX(-100%); opacity: 1; }
+    100%{ transform: translateX(100%); opacity: 0; }
+  }
+  
+  .btn-ghost{ 
+    border:1px solid var(--hairline);
+    color:var(--white);
+    transition:all .3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-ghost:hover{
+    border-color:var(--white);
+    background:rgba(255,255,255,0.08);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(255,255,255,0.15);
   }
 
-  /* ---- Full-bleed hero image, two-layer so the whole car stays visible ---- */
+  ::-webkit-scrollbar{width:10px;}
+  ::-webkit-scrollbar-track{background:var(--black-base);}
+  ::-webkit-scrollbar-thumb{
+    background:linear-gradient(180deg, var(--red-guards), var(--copper));
+    border-radius: 5px;
+    transition: all 0.3s ease;
+  }
+  ::-webkit-scrollbar-thumb:hover{
+    background:linear-gradient(180deg, var(--copper), var(--red-guards));
+    box-shadow: 0 0 10px rgba(156,28,28,0.5);
+  }
+
+  #scrollProgress{
+    position:fixed; top:0; left:0; height:4px; width:0%;
+    background:linear-gradient(90deg, var(--red-guards), var(--copper), var(--electric-blue));
+    z-index:70;
+    box-shadow: 0 0 30px rgba(156,28,28,0.8);
+  }
+
   .heroImgWrap{ position:absolute; inset:0; overflow:hidden; z-index:0; background:#000; }
   .heroCarBg{
     position:absolute; inset:0; width:100%; height:100%;
@@ -124,64 +189,188 @@
     z-index:1;
   }
 
-  .clip-reveal{ clip-path: inset(0 0 0 0); }
-
-  /* color swatch */
   .swatch{
-    width:22px;height:22px;border-radius:9999px;cursor:pointer;
+    width:24px;height:24px;border-radius:9999px;cursor:pointer;
     border:2px solid rgba(255,255,255,0.25);
-    transition:transform .2s ease, border-color .2s ease;
+    transition:transform .2s ease, border-color .2s ease, box-shadow 0.3s ease;
+    position: relative;
   }
-  .swatch:hover{ transform:scale(1.15); }
-  .swatch.active{ border-color:var(--white); box-shadow:0 0 0 2px rgba(255,255,255,0.15); }
+  .swatch:hover{ 
+    transform:scale(1.3);
+    box-shadow: 0 0 30px currentColor, inset 0 0 10px rgba(255,255,255,0.2);
+  }
+  .swatch.active{ 
+    border-color:var(--white);
+    box-shadow:0 0 0 3px rgba(255,255,255,0.2), 0 0 30px rgba(255,255,255,0.4);
+    transform: scale(1.2);
+  }
 
-  /* trim tabs */
   .trim-tab{
     font-family:'JetBrains Mono',monospace;
     font-size:10px; letter-spacing:0.15em; text-transform:uppercase;
-    padding:8px 14px; border:1px solid var(--hairline); color:var(--text-muted);
+    padding:10px 16px; border:1px solid var(--hairline); color:var(--text-muted);
     transition:all .25s ease; white-space:nowrap; cursor:pointer;
+    position: relative;
+    overflow: hidden;
   }
-  .trim-tab.active{ color:var(--black-base); background:var(--white); border-color:var(--white); }
-  .faq-q{ cursor:pointer; }
-  .faq-q:hover{ color:var(--copper); }
-  #soundToggle{ cursor:pointer; }
-  #dialSvg{ cursor:pointer; }
+  .trim-tab.active{ 
+    color:var(--black-base);
+    background:var(--white);
+    border-color:var(--white);
+    box-shadow: 0 0 32px rgba(255,255,255,0.3);
+    transform: translateY(-3px) scale(1.05);
+  }
+  .trim-tab:hover{
+    border-color: var(--copper);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(201,163,92,0.2);
+  }
+  
+  .faq-q{ 
+    cursor:pointer;
+    transition: all 0.3s ease;
+  }
+  .faq-q:hover{ 
+    color:var(--copper);
+    padding-left: 8px;
+  }
+  #soundToggle{ 
+    cursor:pointer;
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  #soundToggle:hover{
+    border-color: var(--white);
+    background: rgba(255,255,255,0.12);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(255,255,255,0.15);
+  }
+  #dialSvg{ 
+    cursor:pointer;
+    filter: drop-shadow(0 0 25px rgba(156,28,28,0.3));
+    transition: filter 0.3s ease;
+  }
+  #dialSvg:hover{
+    filter: drop-shadow(0 0 50px rgba(156,28,28,0.6));
+  }
 
-  /* mobile nav */
-  #mobileMenu{ transform:translateY(-8px); opacity:0; pointer-events:none; transition:all .3s ease; }
-  #mobileMenu.open{ transform:translateY(0); opacity:1; pointer-events:auto; }
+  #mobileMenu{ 
+    transform:translateY(-8px);
+    opacity:0;
+    pointer-events:none;
+    transition:all .3s ease;
+    backdrop-filter: blur(20px);
+    background: rgba(5,5,5,0.95);
+  }
+  #mobileMenu.open{ 
+    transform:translateY(0);
+    opacity:1;
+    pointer-events:auto;
+  }
 
-  /* floating CTA */
-  #floatCta{ transform:translateY(140%); transition:transform .4s cubic-bezier(.2,.8,.2,1); }
-  #floatCta.show{ transform:translateY(0); }
+  #floatCta{ 
+    transform:translateY(140%);
+    transition:transform .4s cubic-bezier(.2,.8,.2,1);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    animation: float 3s ease-in-out infinite;
+  }
+  #floatCta.show{ 
+    transform:translateY(0);
+  }
+  @keyframes float{
+    0%, 100%{ transform: translateY(0); }
+    50%{ transform: translateY(-12px); }
+  }
 
-  /* nav model links */
-  .nav-link{ cursor:pointer; transition:color .25s ease; padding-bottom:4px; border-bottom:1px solid transparent; }
-  .nav-link.page-active{ color:var(--white); border-color:var(--red-guards); }
-  .nav-link:hover{ color:var(--copper); }
-  .mobile-nav-link.page-active{ color:var(--white); }
+  nav{
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  
+  .nav-link{ 
+    cursor:pointer;
+    transition:all .25s ease;
+    padding-bottom:4px;
+    border-bottom:2px solid transparent;
+    position: relative;
+  }
+  .nav-link::after{
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--copper), var(--red-guards));
+    transition: width 0.4s ease;
+  }
+  .nav-link:hover::after{
+    width: 100%;
+  }
+  .nav-link.page-active{ 
+    color:var(--white);
+    border-color:var(--red-guards);
+  }
+  .nav-link:hover{ 
+    color:var(--copper);
+  }
 
-  /* pages */
   .page.hidden{ display:none; }
 
-  /* image placeholder slots — replace the src="" with a direct image link */
   .img-slot{
     position:relative;
-    border:1px dashed rgba(255,255,255,0.18);
+    border:1px solid rgba(255,255,255,0.12);
     background:rgba(255,255,255,0.02);
     display:flex; align-items:center; justify-content:center;
     overflow:hidden;
     min-height:180px;
+    transition: all 0.3s ease;
+    perspective: 800px;
   }
-  .img-slot img{ width:100%; height:100%; object-fit:cover; display:block; }
-  .img-slot .placeholder-label{
-    font-family:'JetBrains Mono',monospace;
-    font-size:9px; letter-spacing:0.2em; text-transform:uppercase;
-    color:var(--text-muted); text-align:center; padding:16px;
+  .img-slot:hover{
+    border-color: rgba(201,163,92,0.5);
+    box-shadow: 0 12px 48px rgba(201,163,92,0.2);
   }
-  .img-slot img[src=""]{ display:none; }
-  .img-slot img:not([src=""]) + .placeholder-label{ display:none; }
+  .img-slot img{ 
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+    transition: transform 0.4s ease;
+    will-change: transform;
+  }
+  .img-slot:hover img{
+    transform: scale(1.08);
+  }
+
+  .glow-text{
+    text-shadow: 0 0 30px rgba(156,28,28,0.6);
+    animation: textGlow 2.5s ease-in-out infinite;
+  }
+  @keyframes textGlow{
+    0%, 100%{ text-shadow: 0 0 20px rgba(156,28,28,0.4); }
+    50%{ text-shadow: 0 0 50px rgba(156,28,28,0.8); }
+  }
+
+  .highlight-box{
+    background: linear-gradient(135deg, rgba(156,28,28,0.1) 0%, rgba(201,163,92,0.05) 100%);
+    border: 1px solid rgba(201,163,92,0.3);
+    padding: 16px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+  .highlight-box:hover{
+    background: linear-gradient(135deg, rgba(156,28,28,0.15) 0%, rgba(201,163,92,0.1) 100%);
+    border-color: rgba(201,163,92,0.5);
+    box-shadow: 0 8px 24px rgba(201,163,92,0.15);
+    transform: translateY(-2px);
+  }
+
+  .faq-item{
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .faq-item:hover{
+    box-shadow: 0 8px 28px rgba(201,163,92,0.12);
+  }
 
   @media (prefers-reduced-motion: reduce){
     *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
@@ -192,9 +381,8 @@
 
 <div id="scrollProgress"></div>
 
-<!-- NAV (shared across all pages) -->
 <nav class="fixed top-0 w-full z-50 flex justify-between items-center px-5 md:px-12 py-4 md:py-5 backdrop-blur-md border-b hairline bg-black/40">
-  <div class="text-lg md:text-2xl font-display font-900 italic tracking-tight cursor-pointer" data-page="911">PORSCHE</div>
+  <div class="text-lg md:text-2xl font-display font-900 italic tracking-tight cursor-pointer hover:text-copper transition-colors duration-300" data-page="911">PORSCHE</div>
   <div class="hidden md:flex space-x-10 text-[10px] tracking-[0.4em] uppercase font-mono text-gray-400">
     <a class="nav-link" data-page="718">718</a>
     <a class="nav-link" data-page="911">911</a>
@@ -202,71 +390,56 @@
     <a class="nav-link" data-page="panamera">Panamera</a>
   </div>
   <div class="flex items-center gap-3">
-    <button class="btn-primary px-4 md:px-6 py-2 md:py-2.5 text-[9px] md:text-[10px] font-bold uppercase tracking-widest">
-      Configurator
-    </button>
-    <button id="menuBtn" class="md:hidden flex flex-col justify-center items-center gap-[5px] w-8 h-8" aria-label="Menu">
-      <span class="block w-5 h-px bg-white"></span>
-      <span class="block w-5 h-px bg-white"></span>
+    <button class="btn-primary px-4 md:px-6 py-2 md:py-2.5 text-[9px] md:text-[10px] font-bold uppercase tracking-widest">Configurator</button>
+    <button id="menuBtn" class="md:hidden flex flex-col justify-center items-center gap-[5px] w-8 h-8 hover:scale-125 transition-transform" aria-label="Menu">
+      <span class="block w-5 h-px bg-white transition-all duration-300"></span>
+      <span class="block w-5 h-px bg-white transition-all duration-300"></span>
     </button>
   </div>
 </nav>
 
-<div id="mobileMenu" class="fixed top-[60px] left-0 w-full z-40 md:hidden bg-black/95 backdrop-blur-md border-b hairline flex flex-col text-center py-6 gap-5 text-xs tracking-[0.3em] uppercase font-mono text-gray-300">
-  <a class="mobile-nav-link" data-page="718">718</a>
-  <a class="mobile-nav-link" data-page="911">911</a>
-  <a class="mobile-nav-link" data-page="taycan">Taycan</a>
-  <a class="mobile-nav-link" data-page="panamera">Panamera</a>
+<div id="mobileMenu" class="fixed top-[60px] left-0 w-full z-40 md:hidden flex flex-col text-center py-6 gap-5 text-xs tracking-[0.3em] uppercase font-mono text-gray-300">
+  <a class="mobile-nav-link hover:text-copper transition-colors duration-300" data-page="718">718</a>
+  <a class="mobile-nav-link hover:text-copper transition-colors duration-300" data-page="911">911</a>
+  <a class="mobile-nav-link hover:text-copper transition-colors duration-300" data-page="taycan">Taycan</a>
+  <a class="mobile-nav-link hover:text-copper transition-colors duration-300" data-page="panamera">Panamera</a>
 </div>
 
-<!-- ======================================================= -->
-<!-- PAGE: 911                                                -->
-<!-- ======================================================= -->
+<!-- PAGE: 911 -->
 <div id="page-911" class="page">
-
-<!-- HERO -->
 <section id="hero" class="relative min-h-screen flex flex-col overflow-hidden">
-
   <div class="heroImgWrap">
     <img class="heroCarBg" id="mainCarBg" src="https://i.pinimg.com/736x/49/6b/b0/496bb089567c7463c8e50812f3d3005f.jpg" alt="" aria-hidden="true">
     <img class="heroCar" id="mainCar" src="https://i.pinimg.com/736x/49/6b/b0/496bb089567c7463c8e50812f3d3005f.jpg" alt="Porsche 911">
     <div class="hero-scrim"></div>
   </div>
 
-  <h2 id="bgText" class="absolute top-[16%] left-1/2 -translate-x-1/2 text-[42vw] md:text-[26vw] leading-none font-display font-900 italic text-white/[0.06] z-[2] select-none whitespace-nowrap pointer-events-none">
-    911
-  </h2>
+  <h2 id="bgText" class="absolute top-[16%] left-1/2 -translate-x-1/2 text-[42vw] md:text-[26vw] leading-none font-display font-900 italic text-white/[0.06] z-[2] select-none whitespace-nowrap pointer-events-none glow-text">911</h2>
 
   <div class="relative z-20 flex-1 flex flex-col justify-end px-5 md:px-10 pt-24">
-
     <p class="mx-auto eyebrow mb-3 md:mb-4">SERIES · 992 · SINCE 1963</p>
 
     <div id="heroUI" class="text-center pb-6">
-      <h1 class="text-[13vw] leading-[0.9] md:text-8xl font-display font-900 italic tracking-tight uppercase mb-4 md:mb-6">
-        Timeless <span class="text-outline">Machine.</span>
-      </h1>
-      <p class="max-w-md mx-auto text-gray-300 text-xs md:text-sm mb-6 md:mb-8 px-4">
-        Setiap detail direkayasa dengan satu tujuan — kesempurnaan yang bertahan lintas generasi.
-      </p>
+      <h1 class="text-[13vw] leading-[0.9] md:text-8xl font-display font-900 italic tracking-tight uppercase mb-4 md:mb-6">Timeless <span class="text-outline">Machine.</span></h1>
+      <p class="max-w-md mx-auto text-gray-300 text-xs md:text-sm mb-6 md:mb-8 px-4">Setiap detail direkayasa dengan satu tujuan — kesempurnaan yang bertahan lintas generasi.</p>
 
       <div class="flex justify-center gap-5 md:gap-8 flex-wrap mb-8 md:mb-10">
-        <div class="text-left border-l border-[var(--red-guards)] pl-3 md:pl-4">
+        <div class="text-left border-l-2 border-[var(--red-guards)] pl-3 md:pl-4 hover:pl-5 transition-all duration-300 hover:border-copper">
           <p class="eyebrow mb-1">Top Speed</p>
-          <p class="text-lg md:text-2xl font-display font-700"><span class="counter" data-target="308">0</span> <span class="text-[10px] md:text-sm text-gray-400">km/h</span></p>
+          <p class="text-lg md:text-2xl font-display font-700"><span class="counter" data-target="308">0</span> km/h</p>
         </div>
-        <div class="text-left border-l border-[var(--red-guards)] pl-3 md:pl-4">
+        <div class="text-left border-l-2 border-[var(--red-guards)] pl-3 md:pl-4 hover:pl-5 transition-all duration-300 hover:border-copper">
           <p class="eyebrow mb-1">0–100 km/h</p>
-          <p class="text-lg md:text-2xl font-display font-700"><span class="counter" data-target="3.4" data-decimal="1">0.0</span> <span class="text-[10px] md:text-sm text-gray-400">s</span></p>
+          <p class="text-lg md:text-2xl font-display font-700"><span class="counter" data-target="3.4" data-decimal="1">0.0</span> s</p>
         </div>
-        <div class="text-left border-l border-[var(--red-guards)] pl-3 md:pl-4">
+        <div class="text-left border-l-2 border-[var(--red-guards)] pl-3 md:pl-4 hover:pl-5 transition-all duration-300 hover:border-copper">
           <p class="eyebrow mb-1">Power</p>
-          <p class="text-lg md:text-2xl font-display font-700"><span class="counter" data-target="480">0</span> <span class="text-[10px] md:text-sm text-gray-400">hp</span></p>
+          <p class="text-lg md:text-2xl font-display font-700"><span class="counter" data-target="480">0</span> hp</p>
         </div>
       </div>
 
-      <!-- color configurator: engagement feature -->
       <div class="flex flex-col items-center gap-3">
-        <p class="eyebrow">PILIH WARNA — <span id="colorLabel" class="text-white">Guards Red</span></p>
+        <p class="eyebrow">PILIH WARNA — <span id="colorLabel" class="text-white font-semibold">Guards Red</span></p>
         <div class="flex gap-3">
           <button class="swatch active" data-filter="none" data-name="Guards Red" style="background:#9c1c1c"></button>
           <button class="swatch" data-filter="grayscale(1) brightness(0.7)" data-name="Jet Black" style="background:#111"></button>
@@ -279,16 +452,13 @@
 
     <div class="flex flex-col items-center gap-2 text-gray-500 pb-6 md:pb-8">
       <span class="eyebrow">SCROLL</span>
-      <div id="scrollLine" class="w-px h-6 md:h-8 bg-gray-700 origin-top"></div>
+      <div id="scrollLine" class="w-px h-6 md:h-8 bg-gradient-to-b from-copper to-red-guards origin-top"></div>
     </div>
   </div>
 </section>
 
-<!-- SPECS -->
 <section id="specs" class="relative min-h-screen flex items-center justify-center px-5 md:px-10 py-20 md:py-24 border-t hairline overflow-hidden">
   <div class="max-w-6xl w-full">
-
-    <!-- trim comparison: engagement feature -->
     <div class="flex justify-center flex-wrap gap-2 mb-12 md:mb-16">
       <button class="trim-tab active" data-trim="carrera">Carrera</button>
       <button class="trim-tab" data-trim="carreraS">Carrera S</button>
@@ -299,14 +469,8 @@
     <div class="grid md:grid-cols-2 gap-12 md:gap-20 items-center">
       <div class="space-y-6 md:space-y-8">
         <p class="eyebrow">01 — REKAYASA</p>
-        <h3 class="text-3xl md:text-5xl font-display font-900 italic uppercase leading-[0.95]">
-          Engineering<br><span style="color:var(--red-guards)">Perfection</span>
-        </h3>
-        <p class="text-gray-400 leading-relaxed text-sm md:text-base">
-          Setiap lekukan dirancang untuk aerodinamika maksimal. Porsche 911 bukan sekadar mobil —
-          ini adalah perwujudan ambisi manusia untuk menaklukkan kecepatan, disempurnakan lewat enam
-          generasi tanpa pernah kehilangan jati dirinya.
-        </p>
+        <h3 class="text-3xl md:text-5xl font-display font-900 italic uppercase leading-[0.95]">Engineering<br><span style="color:var(--red-guards)">Perfection</span></h3>
+        <p class="text-gray-400 leading-relaxed text-sm md:text-base">Setiap lekukan dirancang untuk aerodinamika maksimal. Porsche 911 bukan sekadar mobil — ini adalah perwujudan ambisi manusia untuk menaklukkan kecepatan, disempurnakan lewat enam generasi.</p>
         <div class="pt-2 md:pt-4">
           <div class="spec-row"><span class="label">Engine</span><span class="value" id="specEngine">Twin-turbocharged boxer 6</span></div>
           <div class="spec-row"><span class="label">Displacement</span><span class="value" id="specDisp">2,981 cm³</span></div>
@@ -318,30 +482,33 @@
       </div>
       <div class="relative" id="specImgWrap" style="clip-path: inset(0 100% 0 0);">
         <div class="absolute inset-0 glow-copper blur-3xl"></div>
-        <img src="https://i.pinimg.com/736x/70/24/f3/7024f3c1e4942a166c7db7ecdf6b7280.jpg"
-             alt="Porsche 911 detail"
-             class="relative w-full h-auto rounded-sm border hairline">
+        <img src="https://i.pinimg.com/736x/70/24/f3/7024f3c1e4942a166c7db7ecdf6b7280.jpg" alt="Porsche 911 detail" class="relative w-full h-auto rounded-sm border hairline">
       </div>
     </div>
   </div>
 </section>
 
-<!-- PERFORMANCE DIAL — signature element -->
 <section id="dial" class="relative min-h-screen flex items-center justify-center px-5 md:px-10 py-20 md:py-24 border-t hairline bg-[var(--black-panel)] blueprint-grid">
   <div class="max-w-5xl w-full text-center">
     <p class="eyebrow mb-3 md:mb-4">02 — PERFORMA</p>
-    <h3 class="text-3xl md:text-5xl font-display font-900 italic uppercase mb-10 md:mb-16">
-      Instrumented <span style="color:var(--copper)">Precision</span>
-    </h3>
+    <h3 class="text-3xl md:text-5xl font-display font-900 italic uppercase mb-10 md:mb-16">Instrumented <span style="color:var(--copper)">Precision</span></h3>
 
     <div class="flex justify-center">
       <svg id="dialSvg" viewBox="0 0 200 200" class="w-52 h-52 md:w-80 md:h-80">
+        <defs>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
         <circle cx="100" cy="100" r="92" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
-        <circle id="dialRing" cx="100" cy="100" r="92" fill="none" stroke="var(--red-guards)" stroke-width="2"
-                stroke-dasharray="578" stroke-dashoffset="578" transform="rotate(-90 100 100)"/>
+        <circle id="dialRing" cx="100" cy="100" r="92" fill="none" stroke="var(--red-guards)" stroke-width="2" stroke-dasharray="578" stroke-dashoffset="578" transform="rotate(-90 100 100)" filter="url(#glow)"/>
         <g id="ticks"></g>
         <text x="100" y="70" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--text-muted)" letter-spacing="2">RPM x1000</text>
-        <line id="needle" class="dial-needle" x1="100" y1="100" x2="100" y2="35" stroke="var(--red-guards)" stroke-width="3" stroke-linecap="round"/>
+        <line id="needle" class="dial-needle" x1="100" y1="100" x2="100" y2="35" stroke="var(--red-guards)" stroke-width="3" stroke-linecap="round" filter="url(#glow)"/>
         <circle cx="100" cy="100" r="6" fill="var(--white)"/>
         <text id="rpmValue" x="100" y="130" text-anchor="middle" font-family="Big Shoulders Display" font-weight="900" font-size="30" fill="white">1.0</text>
         <text id="rpmState" x="100" y="148" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="var(--copper)" letter-spacing="2">IDLE</text>
@@ -349,112 +516,126 @@
     </div>
     <p class="eyebrow mt-5 md:mt-6 text-gray-600">SENTUH / ARAHKAN KURSOR KE DIAL UNTUK MENGINJAK GAS</p>
 
-    <button id="soundToggle" class="mt-6 mx-auto flex items-center gap-2 border hairline px-4 py-2 text-[10px] tracking-widest uppercase font-mono text-gray-400 hover:text-white hover:border-white transition">
+    <button id="soundToggle" class="mt-6 mx-auto flex items-center gap-2 border hairline px-4 py-2 text-[10px] tracking-widest uppercase font-mono text-gray-400">
       <span id="soundIcon">🔇</span> <span id="soundLabel">Aktifkan Suara Mesin</span>
     </button>
 
     <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10 mt-10 md:mt-16 text-left max-w-3xl mx-auto">
-      <div>
+      <div class="highlight-box">
         <p class="eyebrow mb-2">Torque</p>
-        <p class="text-2xl md:text-3xl font-display font-700"><span class="counter" data-target="420">0</span> <span class="text-xs md:text-sm text-gray-500">Nm</span></p>
+        <p class="text-2xl md:text-3xl font-display font-700"><span class="counter" data-target="420">0</span> Nm</p>
       </div>
-      <div>
+      <div class="highlight-box">
         <p class="eyebrow mb-2">Braking 100-0</p>
-        <p class="text-2xl md:text-3xl font-display font-700"><span class="counter" data-target="33">0</span> <span class="text-xs md:text-sm text-gray-500">m</span></p>
+        <p class="text-2xl md:text-3xl font-display font-700"><span class="counter" data-target="33">0</span> m</p>
       </div>
-      <div>
+      <div class="highlight-box">
         <p class="eyebrow mb-2">Fuel Economy</p>
-        <p class="text-2xl md:text-3xl font-display font-700"><span class="counter" data-target="10.5" data-decimal="1">0.0</span> <span class="text-xs md:text-sm text-gray-500">L/100km</span></p>
+        <p class="text-2xl md:text-3xl font-display font-700"><span class="counter" data-target="10.5" data-decimal="1">0.0</span> L/100km</p>
       </div>
-      <div>
+      <div class="highlight-box">
         <p class="eyebrow mb-2">Drag Coeff.</p>
-        <p class="text-2xl md:text-3xl font-display font-700"><span class="counter" data-target="0.29" data-decimal="2">0.00</span> <span class="text-xs md:text-sm text-gray-500">Cd</span></p>
+        <p class="text-2xl md:text-3xl font-display font-700"><span class="counter" data-target="0.29" data-decimal="2">0.00</span> Cd</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- FAQ — engagement / retention feature -->
 <section id="faq" class="relative px-5 md:px-10 py-20 md:py-24 border-t hairline">
   <div class="max-w-3xl mx-auto">
     <p class="eyebrow mb-4 text-center">03 — TANYA JAWAB</p>
-    <h3 class="text-3xl md:text-5xl font-display font-900 italic uppercase mb-10 md:mb-14 text-center">
-      Perlu Tahu <span style="color:var(--copper)">Lebih</span>
-    </h3>
+    <h3 class="text-3xl md:text-5xl font-display font-900 italic uppercase mb-10 md:mb-14 text-center">Perlu Tahu <span style="color:var(--copper)">Lebih</span></h3>
     <div class="space-y-3" id="faqList">
-      <div class="faq-item border hairline">
-        <button class="faq-q w-full flex justify-between items-center px-5 py-4 text-left text-sm md:text-base font-medium">
-          Berapa lama waktu tunggu pemesanan?
+      <div class="faq-item border hairline rounded-lg overflow-hidden hover:border-copper transition-all duration-300">
+        <button class="faq-q w-full flex justify-between items-center px-5 py-4 text-left text-sm md:text-base font-medium hover:text-copper">
+          Apa yang membedakan 911 dari model Porsche lainnya?
           <span class="faq-icon font-mono text-[var(--copper)]">+</span>
         </button>
-        <div class="faq-a px-5 text-gray-400 text-sm leading-relaxed" style="max-height:0;overflow:hidden;">
-          <p class="pb-4">Waktu produksi untuk konfigurasi standar berkisar 4–6 bulan, tergantung opsi kustomisasi yang dipilih.</p>
+        <div class="faq-a px-5 text-gray-400 text-sm leading-relaxed bg-black/20" style="max-height:0;overflow:hidden;">
+          <p class="pb-4">911 adalah ikon Porsche dengan mesin rear-mounted yang legendaris. Ia menggabungkan performa track-ready dengan practicality untuk daily driving. Desainnya yang timeless telah bertahan 60 tahun dengan evolusi yang thoughtful setiap generasi.</p>
         </div>
       </div>
-      <div class="faq-item border hairline">
-        <button class="faq-q w-full flex justify-between items-center px-5 py-4 text-left text-sm md:text-base font-medium">
-          Apakah tersedia opsi test drive?
+
+      <div class="faq-item border hairline rounded-lg overflow-hidden hover:border-copper transition-all duration-300">
+        <button class="faq-q w-full flex justify-between items-center px-5 py-4 text-left text-sm md:text-base font-medium hover:text-copper">
+          Berapa lama waktu tunggu untuk memesan 911?
           <span class="faq-icon font-mono text-[var(--copper)]">+</span>
         </button>
-        <div class="faq-a px-5 text-gray-400 text-sm leading-relaxed" style="max-height:0;overflow:hidden;">
-          <p class="pb-4">Ya, jadwalkan test drive melalui dealer resmi terdekat lewat tombol Configurator di atas.</p>
+        <div class="faq-a px-5 text-gray-400 text-sm leading-relaxed bg-black/20" style="max-height:0;overflow:hidden;">
+          <p class="pb-4">Waktu produksi untuk konfigurasi standar berkisar 4-6 bulan. Waiting list bisa lebih panjang di market tertentu. Hubungi dealer resmi untuk informasi terkini tentang delivery schedule.</p>
         </div>
       </div>
-      <div class="faq-item border hairline">
-        <button class="faq-q w-full flex justify-between items-center px-5 py-4 text-left text-sm md:text-base font-medium">
-          Apa bedanya tiap varian (Carrera, S, GTS, Turbo S)?
+
+      <div class="faq-item border hairline rounded-lg overflow-hidden hover:border-copper transition-all duration-300">
+        <button class="faq-q w-full flex justify-between items-center px-5 py-4 text-left text-sm md:text-base font-medium hover:text-copper">
+          Apakah ada opsi test drive sebelum membeli?
           <span class="faq-icon font-mono text-[var(--copper)]">+</span>
         </button>
-        <div class="faq-a px-5 text-gray-400 text-sm leading-relaxed" style="max-height:0;overflow:hidden;">
-          <p class="pb-4">Perbedaan utama ada di tenaga mesin, akselerasi, dan penyetelan suspensi. Bandingkan angkanya langsung di tab varian pada bagian atas.</p>
+        <div class="faq-a px-5 text-gray-400 text-sm leading-relaxed bg-black/20" style="max-height:0;overflow:hidden;">
+          <p class="pb-4">Ya, kami menyediakan pengalaman test drive yang comprehensive. Jadwalkan melalui dealer resmi terdekat. Tim kami akan memandu Anda melalui setiap fitur dan performa mobil secara mendetail.</p>
         </div>
       </div>
-      <div class="faq-item border hairline">
-        <button class="faq-q w-full flex justify-between items-center px-5 py-4 text-left text-sm md:text-base font-medium">
-          Apakah garansi mencakup komponen performa?
+
+      <div class="faq-item border hairline rounded-lg overflow-hidden hover:border-copper transition-all duration-300">
+        <button class="faq-q w-full flex justify-between items-center px-5 py-4 text-left text-sm md:text-base font-medium hover:text-copper">
+          Apa perbedaan antara Carrera, S, GTS, dan Turbo S?
           <span class="faq-icon font-mono text-[var(--copper)]">+</span>
         </button>
-        <div class="faq-a px-5 text-gray-400 text-sm leading-relaxed" style="max-height:0;overflow:hidden;">
-          <p class="pb-4">Garansi standar mencakup mesin dan transmisi selama masa berlaku yang berlaku di wilayah pembelian Anda.</p>
+        <div class="faq-a px-5 text-gray-400 text-sm leading-relaxed bg-black/20" style="max-height:0;overflow:hidden;">
+          <p class="pb-4"><strong>Carrera:</strong> 385 hp, entry-level, RWD. <strong>Carrera S:</strong> 450 hp, handling enhanced. <strong>GTS:</strong> 505 hp, AWD, track-focused. <strong>Turbo S:</strong> 640 hp top-tier, full AWD. Setiap varian punya character unik sesuai driving style Anda.</p>
+        </div>
+      </div>
+
+      <div class="faq-item border hairline rounded-lg overflow-hidden hover:border-copper transition-all duration-300">
+        <button class="faq-q w-full flex justify-between items-center px-5 py-4 text-left text-sm md:text-base font-medium hover:text-copper">
+          Berapa jangkauan bahan bakar dalam kondisi normal?
+          <span class="faq-icon font-mono text-[var(--copper)]">+</span>
+        </button>
+        <div class="faq-a px-5 text-gray-400 text-sm leading-relaxed bg-black/20" style="max-height:0;overflow:hidden;">
+          <p class="pb-4">Konsumsi BBM berkisar 10.5 L/100km dalam mixed driving. Dengan tangki 75 liter, jangkauan sekitar 700 km tercapai. Teknologi efficient fuel injector mengoptimalkan setiap tetes bahan bakar.</p>
+        </div>
+      </div>
+
+      <div class="faq-item border hairline rounded-lg overflow-hidden hover:border-copper transition-all duration-300">
+        <button class="faq-q w-full flex justify-between items-center px-5 py-4 text-left text-sm md:text-base font-medium hover:text-copper">
+          Apakah garansi mencakup service gratis?
+          <span class="faq-icon font-mono text-[var(--copper)]">+</span>
+        </button>
+        <div class="faq-a px-5 text-gray-400 text-sm leading-relaxed bg-black/20" style="max-height:0;overflow:hidden;">
+          <p class="pb-4">Garansi standar 3 tahun mencakup mesin dan transmisi. Paket extended warranty tersedia. Layanan maintenance dijadwalkan per standar pabrik. Hubungi dealer untuk detail benefit dan coverage lengkap.</p>
+        </div>
+      </div>
+
+      <div class="faq-item border hairline rounded-lg overflow-hidden hover:border-copper transition-all duration-300">
+        <button class="faq-q w-full flex justify-between items-center px-5 py-4 text-left text-sm md:text-base font-medium hover:text-copper">
+          Bagaimana performa 911 di kondisi handling ekstrem?
+          <span class="faq-icon font-mono text-[var(--copper)]">+</span>
+        </button>
+        <div class="faq-a px-5 text-gray-400 text-sm leading-relaxed bg-black/20" style="max-height:0;overflow:hidden;">
+          <p class="pb-4">911 dirancang untuk track-level handling dengan 1.2G lateral acceleration. Stability control, active suspension, dan Porsche Traction Management memberikan confidence maksimal. Responsive steering yang predictable.</p>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- CTA -->
 <section class="relative py-24 md:py-32 px-5 md:px-10 border-t hairline flex flex-col items-center text-center overflow-hidden">
   <div id="ctaGlow" class="absolute inset-0 glow-red opacity-60"></div>
   <p class="eyebrow mb-4 relative z-10">04 — MULAI</p>
-  <h3 class="relative z-10 text-3xl md:text-6xl font-display font-900 italic uppercase max-w-2xl leading-tight mb-8">
-    Rancang 911 Anda Sendiri
-  </h3>
-  <button class="relative z-10 btn-primary px-7 md:px-8 py-3 md:py-3.5 text-xs font-bold uppercase tracking-widest">
-    Buka Configurator
-  </button>
+  <h3 class="relative z-10 text-3xl md:text-6xl font-display font-900 italic uppercase max-w-2xl leading-tight mb-8">Rancang 911 Anda Sendiri</h3>
+  <button class="relative z-10 btn-primary px-7 md:px-8 py-3 md:py-3.5 text-xs font-bold uppercase tracking-widest">Buka Configurator</button>
 </section>
 
-<!-- FOOTER -->
-<footer class="py-10 text-center text-gray-600 text-[9px] md:text-[10px] tracking-[0.4em] md:tracking-[0.5em] uppercase border-t hairline px-4">
-  © 2026 Porsche Digital Concept
-</footer>
+<footer class="py-10 text-center text-gray-600 text-[9px] md:text-[10px] tracking-[0.4em] md:tracking-[0.5em] uppercase border-t hairline px-4">© 2026 Porsche Digital Concept</footer>
+</div>
 
-</div><!-- /page-911 -->
-
-<!-- ======================================================= -->
-<!-- PAGE: 718                                                -->
-<!-- ======================================================= -->
+<!-- PAGE: 718 -->
 <div id="page-718" class="page hidden">
   <section class="relative min-h-[70vh] flex flex-col justify-end px-5 md:px-10 pt-32 pb-16 border-b hairline overflow-hidden blueprint-grid">
-    <div class="absolute inset-0 glow-copper opacity-40"></div>
+    <div class="absolute inset-0 glow-copper opacity-50"></div>
     <p class="eyebrow mb-3 relative z-10">MID-ENGINE · SINCE 1996</p>
-    <h1 class="relative z-10 text-[15vw] md:text-8xl leading-[0.9] font-display font-900 italic uppercase tracking-tight mb-4">
-      Pure <span class="text-outline">Instinct.</span>
-    </h1>
-    <p class="relative z-10 max-w-md text-gray-300 text-xs md:text-sm">
-      718 Cayman dan Boxster — arsitektur mid-engine yang menempatkan keseimbangan di atas segalanya.
-      Dibuat untuk pengendara yang merasakan setiap tikungan sebagai percakapan dengan jalan.
-    </p>
+    <h1 class="relative z-10 text-[15vw] md:text-8xl leading-[0.9] font-display font-900 italic uppercase tracking-tight mb-4 glow-text">Pure <span class="text-outline">Instinct.</span></h1>
+    <p class="relative z-10 max-w-md text-gray-300 text-xs md:text-sm">718 Cayman dan Boxster — mid-engine platform yang menempatkan keseimbangan sempurna. Untuk pengendara yang merasakan setiap tikungan.</p>
   </section>
 
   <section class="px-5 md:px-10 py-16 md:py-24">
@@ -462,35 +643,73 @@
       <div class="space-y-6">
         <p class="eyebrow">TENTANG 718</p>
         <h2 class="text-2xl md:text-4xl font-display font-900 italic uppercase leading-tight">Ringan, Rendah, <span style="color:var(--copper)">Responsif</span></h2>
-        <p class="text-gray-400 text-sm md:text-base leading-relaxed">
-          Mesin diletakkan tepat di tengah sasis, mendekati titik berat ideal untuk distribusi bobot 50:50.
-          Hasilnya: respons kemudi instan dan traksi yang stabil di segala kondisi jalan, baik di sirkuit
-          maupun rute pegunungan berkelok.
-        </p>
+        <p class="text-gray-400 text-sm md:text-base leading-relaxed">Mesin diletakkan tengah sasis untuk distribusi bobot 50:50 sempurna. Respons kemudi instan dan traksi stabil di segala kondisi. Setiap putaran mesin langsung terhubung ke roda.</p>
         <div class="pt-2">
-          <div class="spec-row"><span class="label">Engine</span><span class="value">Turbocharged flat-4 / flat-6 (GTS 4.0)</span></div>
+          <div class="spec-row"><span class="label">Engine</span><span class="value">Turbocharged flat-4 / flat-6</span></div>
           <div class="spec-row"><span class="label">Power</span><span class="value">300–420 hp</span></div>
           <div class="spec-row"><span class="label">0–100 km/h</span><span class="value">4.0–4.4 s</span></div>
           <div class="spec-row"><span class="label">Top speed</span><span class="value">275–293 km/h</span></div>
-          <div class="spec-row"><span class="label">Drive</span><span class="value">Rear-wheel drive</span></div>
           <div class="spec-row"><span class="label">Starting price</span><span class="value">Rp 1.6 M</span></div>
         </div>
       </div>
 
-      <!-- SLOT GAMBAR: tempel link gambar 718 di src="" di bawah -->
       <div class="space-y-4">
         <div class="img-slot aspect-[4/3]">
-          <img src="https://i.pinimg.com/736x/46/97/a8/4697a8d7446bfaed96c53b71391d21eb.jpg" alt="Porsche 718 — gambar utama">
-          <p class="placeholder-label">SLOT GAMBAR UTAMA 718<br>isi atribut src="" pada tag &lt;img&gt; ini dengan link gambar</p>
+          <img src="https://i.pinimg.com/736x/46/97/a8/4697a8d7446bfaed96c53b71391d21eb.jpg" alt="Porsche 718">
         </div>
         <div class="grid grid-cols-2 gap-4">
           <div class="img-slot aspect-square">
-            <img src="https://i.pinimg.com/736x/d5/62/72/d562723a33a3085fe30ebaab2e648fa6.jpg" alt="Porsche 718 — interior">
-            <p class="placeholder-label">SLOT INTERIOR</p>
+            <img src="https://i.pinimg.com/736x/d5/62/72/d562723a33a3085fe30ebaab2e648fa6.jpg" alt="Porsche 718 interior">
           </div>
           <div class="img-slot aspect-square">
-            <img src="https://i.pinimg.com/736x/fc/25/50/fc2550a9b062d19f003c18898b030a41.jpg" alt="Porsche 718 — detail">
-            <p class="placeholder-label">SLOT DETAIL</p>
+            <img src="https://i.pinimg.com/736x/fc/25/50/fc2550a9b062d19f003c18898b030a41.jpg" alt="Porsche 718 detail">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq-718" class="relative px-5 md:px-10 py-20 md:py-24 border-t hairline">
+    <div class="max-w-3xl mx-auto">
+      <p class="eyebrow mb-4 text-center">TANYA JAWAB 718</p>
+      <div class="space-y-3">
+        <div class="faq-item border hairline rounded-lg overflow-hidden hover:border-copper transition-all duration-300">
+          <button class="faq-q w-full flex justify-between items-center px-5 py-4 text-left text-sm md:text-base font-medium hover:text-copper">
+            Mengapa 718 dipilih oleh track enthusiast?
+            <span class="faq-icon font-mono text-[var(--copper)]">+</span>
+          </button>
+          <div class="faq-a px-5 text-gray-400 text-sm leading-relaxed bg-black/20" style="max-height:0;overflow:hidden;">
+            <p class="pb-4">Weight distribution sempurna 50:50, lightweight construction, responsive steering, dan predictable handling membuatnya ideal untuk track days dan canyon carving.</p>
+          </div>
+        </div>
+
+        <div class="faq-item border hairline rounded-lg overflow-hidden hover:border-copper transition-all duration-300">
+          <button class="faq-q w-full flex justify-between items-center px-5 py-4 text-left text-sm md:text-base font-medium hover:text-copper">
+            Apa perbedaan Cayman dan Boxster?
+            <span class="faq-icon font-mono text-[var(--copper)]">+</span>
+          </button>
+          <div class="faq-a px-5 text-gray-400 text-sm leading-relaxed bg-black/20" style="max-height:0;overflow:hidden;">
+            <p class="pb-4"><strong>Cayman:</strong> Fixed roof coupe, stiffer chassis, lebih nimble. <strong>Boxster:</strong> Convertible dengan softer suspension untuk comfort. Performa core sama, pilihan sesuai lifestyle.</p>
+          </div>
+        </div>
+
+        <div class="faq-item border hairline rounded-lg overflow-hidden hover:border-copper transition-all duration-300">
+          <button class="faq-q w-full flex justify-between items-center px-5 py-4 text-left text-sm md:text-base font-medium hover:text-copper">
+            Berapa kapasitas tangki dan konsumsi 718?
+            <span class="faq-icon font-mono text-[var(--copper)]">+</span>
+          </button>
+          <div class="faq-a px-5 text-gray-400 text-sm leading-relaxed bg-black/20" style="max-height:0;overflow:hidden;">
+            <p class="pb-4">Tangki 64 liter dengan konsumsi 8.5-9.5 L/100km. Jangkauan campuran 650-750 km per penuh tangki dalam kondisi normal.</p>
+          </div>
+        </div>
+
+        <div class="faq-item border hairline rounded-lg overflow-hidden hover:border-copper transition-all duration-300">
+          <button class="faq-q w-full flex justify-between items-center px-5 py-4 text-left text-sm md:text-base font-medium hover:text-copper">
+            Apakah 718 cocok untuk daily driver?
+            <span class="faq-icon font-mono text-[var(--copper)]">+</span>
+          </button>
+          <div class="faq-a px-5 text-gray-400 text-sm leading-relaxed bg-black/20" style="max-height:0;overflow:hidden;">
+            <p class="pb-4">Ya, sangat praktis untuk daily. Cabin modern dengan tech features, storage adequate, dan ride comfort baik. Suspension adaptive menyesuaikan antara comfort dan sport mode.</p>
           </div>
         </div>
       </div>
@@ -501,39 +720,27 @@
     <button class="nav-link btn-ghost px-7 py-3 text-xs font-bold uppercase tracking-widest font-mono" data-page="911">← Kembali ke 911</button>
   </section>
 
-  <footer class="py-10 text-center text-gray-600 text-[9px] md:text-[10px] tracking-[0.4em] md:tracking-[0.5em] uppercase border-t hairline px-4">
-    © 2026 Porsche Digital Concept
-  </footer>
-</div><!-- /page-718 -->
+  <footer class="py-10 text-center text-gray-600 text-[9px] md:text-[10px] tracking-[0.4em] md:tracking-[0.5em] uppercase border-t hairline px-4">© 2026 Porsche Digital Concept</footer>
+</div>
 
-<!-- ======================================================= -->
-<!-- PAGE: TAYCAN                                             -->
-<!-- ======================================================= -->
+<!-- PAGE: TAYCAN -->
 <div id="page-taycan" class="page hidden">
   <section class="relative min-h-[70vh] flex flex-col justify-end px-5 md:px-10 pt-32 pb-16 border-b hairline overflow-hidden blueprint-grid">
-    <div class="absolute inset-0" style="background:radial-gradient(circle at center, rgba(47,143,209,0.18) 0%, transparent 70%);"></div>
-    <p class="eyebrow mb-3 relative z-10">ALL-ELECTRIC · SINCE 2019</p>
-    <h1 class="relative z-10 text-[15vw] md:text-8xl leading-[0.9] font-display font-900 italic uppercase tracking-tight mb-4">
-      Silent <span class="text-outline">Force.</span>
-    </h1>
-    <p class="relative z-10 max-w-md text-gray-300 text-xs md:text-sm">
-      Taycan membuktikan bahwa jiwa Porsche tidak bergantung pada suara mesin — tapi pada bagaimana
-      tenaga itu disalurkan ke jalan, seketika dan tanpa jeda.
-    </p>
+    <div class="absolute inset-0 glow-blue opacity-60"></div>
+    <p class="eyebrow mb-3 relative z-10" style="color: var(--electric-blue);">ALL-ELECTRIC · SINCE 2019</p>
+    <h1 class="relative z-10 text-[15vw] md:text-8xl leading-[0.9] font-display font-900 italic uppercase tracking-tight mb-4" style="text-shadow: 0 0 30px rgba(47,143,209,0.6);">Silent <span class="text-outline">Force.</span></h1>
+    <p class="relative z-10 max-w-md text-gray-300 text-xs md:text-sm">Taycan membuktikan jiwa Porsche tidak bergantung suara mesin—tapi bagaimana tenaga disalurkan ke jalan, seketika dan tanpa jeda. Revolusi elektrik sejati.</p>
   </section>
 
   <section class="px-5 md:px-10 py-16 md:py-24">
     <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 md:gap-16 items-start">
       <div class="space-y-6">
-        <p class="eyebrow">TENTANG TAYCAN</p>
-        <h2 class="text-2xl md:text-4xl font-display font-900 italic uppercase leading-tight">Tenaga <span style="color:#2f8fd1">Instan</span></h2>
-        <p class="text-gray-400 text-sm md:text-base leading-relaxed">
-          Arsitektur 800-volt memungkinkan pengisian cepat dan performa berulang tanpa penurunan tenaga
-          yang signifikan. Dua motor listrik menyalurkan torsi maksimum sejak putaran roda pertama.
-        </p>
+        <p class="eyebrow" style="color: var(--electric-blue);">TENTANG TAYCAN</p>
+        <h2 class="text-2xl md:text-4xl font-display font-900 italic uppercase leading-tight">Tenaga <span style="color:var(--electric-blue)">Instan</span></h2>
+        <p class="text-gray-400 text-sm md:text-base leading-relaxed">Arsitektur 800-volt memungkinkan pengisian cepat dan performa berulang tanpa penurunan. Dual electric motor menyalurkan torsi maksimum sejak putaran pertama. Silent, brutal, futuristik.</p>
         <div class="pt-2">
           <div class="spec-row"><span class="label">Powertrain</span><span class="value">Dual electric motor, AWD</span></div>
-          <div class="spec-row"><span class="label">Power</span><span class="value">Hingga halaman 761 hp (Turbo S)</span></div>
+          <div class="spec-row"><span class="label">Power</span><span class="value">Hingga 761 hp (Turbo S)</span></div>
           <div class="spec-row"><span class="label">0–100 km/h</span><span class="value">2.4–5.4 s</span></div>
           <div class="spec-row"><span class="label">Range (WLTP)</span><span class="value">Hingga 484 km</span></div>
           <div class="spec-row"><span class="label">Charging</span><span class="value">270 kW DC, 800V</span></div>
@@ -541,20 +748,83 @@
         </div>
       </div>
 
-      <!-- SLOT GAMBAR: tempel link gambar Taycan di src="" di bawah -->
       <div class="space-y-4">
         <div class="img-slot aspect-[4/3]">
-          <img src="https://i.pinimg.com/736x/58/76/a3/5876a374a302647d2f835786a63e6dc5.jpg" alt="Porsche Taycan — gambar utama">
-          <p class="placeholder-label">SLOT GAMBAR UTAMA TAYCAN<br>isi atribut src="" pada tag &lt;img&gt; ini dengan link gambar</p>
+          <img src="https://i.pinimg.com/736x/58/76/a3/5876a374a302647d2f835786a63e6dc5.jpg" alt="Porsche Taycan">
         </div>
         <div class="grid grid-cols-2 gap-4">
           <div class="img-slot aspect-square">
-            <img src="https://i.pinimg.com/736x/cb/0e/0b/cb0e0b045baca76eda06e974b3e54ae3.jpg" alt="Porsche Taycan — interior">
-            <p class="placeholder-label">SLOT INTERIOR</p>
+            <img src="https://i.pinimg.com/736x/cb/0e/0b/cb0e0b045baca76eda06e974b3e54ae3.jpg" alt="Taycan interior">
           </div>
           <div class="img-slot aspect-square">
-            <img src="https://i.pinimg.com/736x/e8/43/30/e843308c0ac34d90dbbc47e8f5149d34.jpg" alt="Porsche Taycan — charging port">
-            <p class="placeholder-label">SLOT DETAIL</p>
+            <img src="https://i.pinimg.com/736x/e8/43/30/e843308c0ac34d90dbbc47e8f5149d34.jpg" alt="Taycan detail">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq-taycan" class="relative px-5 md:px-10 py-20 md:py-24 border-t hairline">
+    <div class="max-w-3xl mx-auto">
+      <p class="eyebrow mb-4 text-center" style="color: var(--electric-blue);">TANYA JAWAB TAYCAN</p>
+      <div class="space-y-3">
+        <div class="faq-item border hairline rounded-lg overflow-hidden hover:border-copper transition-all duration-300">
+          <button class="faq-q w-full flex justify-between items-center px-5 py-4 text-left text-sm md:text-base font-medium hover:text-copper">
+            Berapa lama charging Taycan 0-80%?
+            <span class="faq-icon font-mono text-[var(--copper)]">+</span>
+          </button>
+          <div class="faq-a px-5 text-gray-400 text-sm leading-relaxed bg-black/20" style="max-height:0;overflow:hidden;">
+            <p class="pb-4">Dengan 270 kW DC fast charger, Taycan mencapai 80% dalam 22-27 menit. Home charging 11 kW AC membutuhkan 8-10 jam full charge. 800V architecture memastikan efficiency maksimal.</p>
+          </div>
+        </div>
+
+        <div class="faq-item border hairline rounded-lg overflow-hidden hover:border-copper transition-all duration-300">
+          <button class="faq-q w-full flex justify-between items-center px-5 py-4 text-left text-sm md:text-base font-medium hover:text-copper">
+            Apakah Taycan cocok untuk perjalanan jauh?
+            <span class="faq-icon font-mono text-[var(--copper)]">+</span>
+          </button>
+          <div class="faq-a px-5 text-gray-400 text-sm leading-relaxed bg-black/20" style="max-height:0;overflow:hidden;">
+            <p class="pb-4">Range 484 km membuat Taycan praktis untuk perjalanan jauh. Network charging terus berkembang. Real-time routing membantu merencanakan stop. Performance tidak menurun berkat thermal management superior.</p>
+          </div>
+        </div>
+
+        <div class="faq-item border hairline rounded-lg overflow-hidden hover:border-copper transition-all duration-300">
+          <button class="faq-q w-full flex justify-between items-center px-5 py-4 text-left text-sm md:text-base font-medium hover:text-copper">
+            Apa keuntungan dual motor AWD Taycan?
+            <span class="faq-icon font-mono text-[var(--copper)]">+</span>
+          </button>
+          <div class="faq-a px-5 text-gray-400 text-sm leading-relaxed bg-black/20" style="max-height:0;overflow:hidden;">
+            <p class="pb-4">Instant torque vectoring, independent power distribution ke tiap roda, dan traction superior di kondisi apapun. Precision handling belum pernah ada sebelumnya dalam Porsche.</p>
+          </div>
+        </div>
+
+        <div class="faq-item border hairline rounded-lg overflow-hidden hover:border-copper transition-all duration-300">
+          <button class="faq-q w-full flex justify-between items-center px-5 py-4 text-left text-sm md:text-base font-medium hover:text-copper">
+            Berapa biaya operasional vs mobil bensin?
+            <span class="faq-icon font-mono text-[var(--copper)]">+</span>
+          </button>
+          <div class="faq-a px-5 text-gray-400 text-sm leading-relaxed bg-black/20" style="max-height:0;overflow:hidden;">
+            <p class="pb-4">Charging 60% lebih murah dari bensin. Maintenance jauh lebih rendah tanpa oli, busi, timing belt. Over 10 tahun, penghematan operational 30-40% dibanding mobil ICE.</p>
+          </div>
+        </div>
+
+        <div class="faq-item border hairline rounded-lg overflow-hidden hover:border-copper transition-all duration-300">
+          <button class="faq-q w-full flex justify-between items-center px-5 py-4 text-left text-sm md:text-base font-medium hover:text-copper">
+            Berapa garansi battery Taycan?
+            <span class="faq-icon font-mono text-[var(--copper)]">+</span>
+          </button>
+          <div class="faq-a px-5 text-gray-400 text-sm leading-relaxed bg-black/20" style="max-height:0;overflow:hidden;">
+            <p class="pb-4">Battery dijamin 8 tahun atau 160,000 km, dengan coverage capacity minimum 70%. Advanced thermal management menjaga health bahkan dengan fast charging frequent.</p>
+          </div>
+        </div>
+
+        <div class="faq-item border hairline rounded-lg overflow-hidden hover:border-copper transition-all duration-300">
+          <button class="faq-q w-full flex justify-between items-center px-5 py-4 text-left text-sm md:text-base font-medium hover:text-copper">
+            Bagaimana regenerative braking Taycan bekerja?
+            <span class="faq-icon font-mono text-[var(--copper)]">+</span>
+          </button>
+          <div class="faq-a px-5 text-gray-400 text-sm leading-relaxed bg-black/20" style="max-height:0;overflow:hidden;">
+            <p class="pb-4">Motor listrik bekerja sebaliknya saat braking untuk menangkap energy kinetik. Teknologi ini recover hingga 90% energy pada city driving. Dalam kondisi ideal, bisa extend range 30%.</p>
           </div>
         </div>
       </div>
@@ -565,25 +835,16 @@
     <button class="nav-link btn-ghost px-7 py-3 text-xs font-bold uppercase tracking-widest font-mono" data-page="911">← Kembali ke 911</button>
   </section>
 
-  <footer class="py-10 text-center text-gray-600 text-[9px] md:text-[10px] tracking-[0.4em] md:tracking-[0.5em] uppercase border-t hairline px-4">
-    © 2026 Porsche Digital Concept
-  </footer>
-</div><!-- /page-taycan -->
+  <footer class="py-10 text-center text-gray-600 text-[9px] md:text-[10px] tracking-[0.4em] md:tracking-[0.5em] uppercase border-t hairline px-4">© 2026 Porsche Digital Concept</footer>
+</div>
 
-<!-- ======================================================= -->
-<!-- PAGE: PANAMERA                                           -->
-<!-- ======================================================= -->
+<!-- PAGE: PANAMERA -->
 <div id="page-panamera" class="page hidden">
   <section class="relative min-h-[70vh] flex flex-col justify-end px-5 md:px-10 pt-32 pb-16 border-b hairline overflow-hidden blueprint-grid">
-    <div class="absolute inset-0 glow-red opacity-30"></div>
+    <div class="absolute inset-0 glow-red opacity-40"></div>
     <p class="eyebrow mb-3 relative z-10">GRAN TURISMO · SINCE 2009</p>
-    <h1 class="relative z-10 text-[15vw] md:text-8xl leading-[0.9] font-display font-900 italic uppercase tracking-tight mb-4">
-      Grand <span class="text-outline">Ambition.</span>
-    </h1>
-    <p class="relative z-10 max-w-md text-gray-300 text-xs md:text-sm">
-      Panamera menyatukan kenyamanan sedan eksekutif dengan jiwa sport sejati Porsche —
-      empat kursi, satu ambisi: performa tanpa kompromi pada kenyamanan.
-    </p>
+    <h1 class="relative z-10 text-[15vw] md:text-8xl leading-[0.9] font-display font-900 italic uppercase tracking-tight mb-4 glow-text">Grand <span class="text-outline">Ambition.</span></h1>
+    <p class="relative z-10 max-w-md text-gray-300 text-xs md:text-sm">Panamera menyatukan kenyamanan sedan eksekutif dengan jiwa sport Porsche — empat kursi, satu ambisi: performa tanpa kompromi pada luxury.</p>
   </section>
 
   <section class="px-5 md:px-10 py-16 md:py-24">
@@ -591,34 +852,93 @@
       <div class="space-y-6">
         <p class="eyebrow">TENTANG PANAMERA</p>
         <h2 class="text-2xl md:text-4xl font-display font-900 italic uppercase leading-tight">Mewah <span style="color:var(--red-guards)">Bertenaga</span></h2>
-        <p class="text-gray-400 text-sm md:text-base leading-relaxed">
-          Dari mesin V6 turbo hingga varian Turbo S E-Hybrid, Panamera menawarkan spektrum performa
-          terluas di jajaran Porsche, dibungkus dalam kabin yang senyap dan penuh teknologi.
-        </p>
+        <p class="text-gray-400 text-sm md:text-base leading-relaxed">Dari V6 turbo hingga Turbo S E-Hybrid, Panamera menawarkan spektrum performa terluas di jajaran Porsche. Sedan sport sophisticated untuk executives yang menuntut performa maksimal.</p>
         <div class="pt-2">
           <div class="spec-row"><span class="label">Engine</span><span class="value">V6 Turbo / V8 Turbo / E-Hybrid</span></div>
-          <div class="spec-row"><span class="label">Power</span><span class="value">330–782 hp (Turbo S E-Hybrid)</span></div>
+          <div class="spec-row"><span class="label">Power</span><span class="value">330–782 hp</span></div>
           <div class="spec-row"><span class="label">0–100 km/h</span><span class="value">2.9–5.6 s</span></div>
           <div class="spec-row"><span class="label">Top speed</span><span class="value">Hingga 315 km/h</span></div>
-          <div class="spec-row"><span class="label">Drive</span><span class="value">RWD / AWD (4)</span></div>
           <div class="spec-row"><span class="label">Starting price</span><span class="value">Rp 3.4 M</span></div>
         </div>
       </div>
 
-      <!-- SLOT GAMBAR: tempel link gambar Panamera di src="" di bawah -->
       <div class="space-y-4">
         <div class="img-slot aspect-[4/3]">
-          <img src="https://i.pinimg.com/1200x/e2/59/1c/e2591c60376a50517432ed47b76d3b4e.jpg" alt="Porsche Panamera — gambar utama">
-          <p class="placeholder-label">SLOT GAMBAR UTAMA PANAMERA<br>isi atribut src="" pada tag &lt;img&gt; ini dengan link gambar</p>
+          <img src="https://i.pinimg.com/1200x/e2/59/1c/e2591c60376a50517432ed47b76d3b4e.jpg" alt="Porsche Panamera">
         </div>
         <div class="grid grid-cols-2 gap-4">
           <div class="img-slot aspect-square">
-            <img src="https://i.pinimg.com/1200x/47/e0/ef/47e0ef9aea90340fafcb10bb75168a67.jpg" alt="Porsche Panamera — interior">
-            <p class="placeholder-label">SLOT INTERIOR</p>
+            <img src="https://i.pinimg.com/1200x/47/e0/ef/47e0ef9aea90340fafcb10bb75168a67.jpg" alt="Panamera interior">
           </div>
           <div class="img-slot aspect-square">
-            <img src="https://i.pinimg.com/1200x/3c/ba/9a/3cba9a2c6693afff6d71cfa1f7d8a0f2.jpg" alt="Porsche Panamera — detail">
-            <p class="placeholder-label">SLOT DETAIL</p>
+            <img src="https://i.pinimg.com/1200x/3c/ba/9a/3cba9a2c6693afff6d71cfa1f7d8a0f2.jpg" alt="Panamera detail">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq-panamera" class="relative px-5 md:px-10 py-20 md:py-24 border-t hairline">
+    <div class="max-w-3xl mx-auto">
+      <p class="eyebrow mb-4 text-center">TANYA JAWAB PANAMERA</p>
+      <div class="space-y-3">
+        <div class="faq-item border hairline rounded-lg overflow-hidden hover:border-copper transition-all duration-300">
+          <button class="faq-q w-full flex justify-between items-center px-5 py-4 text-left text-sm md:text-base font-medium hover:text-copper">
+            Apa keunggulan Panamera sebagai sedan keluarga?
+            <span class="faq-icon font-mono text-[var(--copper)]">+</span>
+          </button>
+          <div class="faq-a px-5 text-gray-400 text-sm leading-relaxed bg-black/20" style="max-height:0;overflow:hidden;">
+            <p class="pb-4">Seating untuk 5 orang dengan trunk 495 liter. Comfort suspension, soundproof cabin, climate control individual. Performance driving experience untuk driver yang antusias.</p>
+          </div>
+        </div>
+
+        <div class="faq-item border hairline rounded-lg overflow-hidden hover:border-copper transition-all duration-300">
+          <button class="faq-q w-full flex justify-between items-center px-5 py-4 text-left text-sm md:text-base font-medium hover:text-copper">
+            Apa bedanya V6, V8, dan E-Hybrid Panamera?
+            <span class="faq-icon font-mono text-[var(--copper)]">+</span>
+          </button>
+          <div class="faq-a px-5 text-gray-400 text-sm leading-relaxed bg-black/20" style="max-height:0;overflow:hidden;">
+            <p class="pb-4"><strong>V6 Turbo:</strong> 330 hp, daily ideal, efficient. <strong>V8 Turbo:</strong> 550 hp, refined power, ultimate performance. <strong>Turbo S E-Hybrid:</strong> 782 hp, electric motor assist, zero-lag, intelligent battery.</p>
+          </div>
+        </div>
+
+        <div class="faq-item border hairline rounded-lg overflow-hidden hover:border-copper transition-all duration-300">
+          <button class="faq-q w-full flex justify-between items-center px-5 py-4 text-left text-sm md:text-base font-medium hover:text-copper">
+            Berapa konsumsi bahan bakar Panamera?
+            <span class="faq-icon font-mono text-[var(--copper)]">+</span>
+          </button>
+          <div class="faq-a px-5 text-gray-400 text-sm leading-relaxed bg-black/20" style="max-height:0;overflow:hidden;">
+            <p class="pb-4">V6 sekitar 9.5 L/100km, V8 sekitar 11 L/100km. E-Hybrid dengan electric power 8-9 L/100km. Mode EV pure bisa hingga 50 km tergantung kondisi.</p>
+          </div>
+        </div>
+
+        <div class="faq-item border hairline rounded-lg overflow-hidden hover:border-copper transition-all duration-300">
+          <button class="faq-q w-full flex justify-between items-center px-5 py-4 text-left text-sm md:text-base font-medium hover:text-copper">
+            Apakah Panamera cocok untuk long-distance touring?
+            <span class="faq-icon font-mono text-[var(--copper)]">+</span>
+          </button>
+          <div class="faq-a px-5 text-gray-400 text-sm leading-relaxed bg-black/20" style="max-height:0;overflow:hidden;">
+            <p class="pb-4">Sempurna untuk long-distance. Adaptive suspension menyesuaikan otomatis. Cruise control, premium sound, ambient lighting membuat 12+ jam enjoyable.</p>
+          </div>
+        </div>
+
+        <div class="faq-item border hairline rounded-lg overflow-hidden hover:border-copper transition-all duration-300">
+          <button class="faq-q w-full flex justify-between items-center px-5 py-4 text-left text-sm md:text-base font-medium hover:text-copper">
+            Bagaimana teknologi hybrid Panamera bekerja?
+            <span class="faq-icon font-mono text-[var(--copper)]">+</span>
+          </button>
+          <div class="faq-a px-5 text-gray-400 text-sm leading-relaxed bg-black/20" style="max-height:0;overflow:hidden;">
+            <p class="pb-4">100 kW electric motor terintegrasi dengan transmission. System intelligently memilih efficient—engine, electric, atau kombinasi. Regenerative braking menangkap energy untuk 14.1 kWh battery. Seamless switching seperti single engine.</p>
+          </div>
+        </div>
+
+        <div class="faq-item border hairline rounded-lg overflow-hidden hover:border-copper transition-all duration-300">
+          <button class="faq-q w-full flex justify-between items-center px-5 py-4 text-left text-sm md:text-base font-medium hover:text-copper">
+            Apakah safety features Panamera memadai untuk family?
+            <span class="faq-icon font-mono text-[var(--copper)]">+</span>
+          </button>
+          <div class="faq-a px-5 text-gray-400 text-sm leading-relaxed bg-black/20" style="max-height:0;overflow:hidden;">
+            <p class="pb-4">Ya, dilengkapi adaptive cruise control, lane keeping assist, emergency brake assist, 360-degree camera. 5-star safety rating. Premium seats dengan integrated airbags melindungi semua penumpang.</p>
           </div>
         </div>
       </div>
@@ -629,30 +949,28 @@
     <button class="nav-link btn-ghost px-7 py-3 text-xs font-bold uppercase tracking-widest font-mono" data-page="911">← Kembali ke 911</button>
   </section>
 
-  <footer class="py-10 text-center text-gray-600 text-[9px] md:text-[10px] tracking-[0.4em] md:tracking-[0.5em] uppercase border-t hairline px-4">
-    © 2026 Porsche Digital Concept
-  </footer>
-</div><!-- /page-panamera -->
+  <footer class="py-10 text-center text-gray-600 text-[9px] md:text-[10px] tracking-[0.4em] md:tracking-[0.5em] uppercase border-t hairline px-4">© 2026 Porsche Digital Concept</footer>
+</div>
 
-<!-- Floating sticky CTA (only shown on 911 page after leaving hero) -->
-<a id="floatCta" class="fixed bottom-5 right-5 z-50 btn-primary px-5 py-3 text-[10px] font-bold uppercase tracking-widest shadow-2xl flex items-center gap-2 cursor-pointer" data-page="911">
-  Configurator →
-</a>
+<a id="floatCta" class="fixed bottom-5 right-5 z-50 btn-primary px-5 py-3 text-[10px] font-bold uppercase tracking-widest" data-page="911">Configurator →</a>
 
 <script>
   gsap.registerPlugin(ScrollTrigger);
 
-  /* ---------- Page navigation ---------- */
   const pages = document.querySelectorAll('.page');
   const navTargets = document.querySelectorAll('[data-page]');
 
   function showPage(id){
+    const target = document.getElementById('page-' + id);
     pages.forEach(p => p.classList.toggle('hidden', p.id !== 'page-' + id));
     document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(l => {
       l.classList.toggle('page-active', l.dataset.page === id);
     });
     window.scrollTo({ top: 0, behavior: 'auto' });
     mobileMenu.classList.remove('open');
+    if (target) {
+      gsap.fromTo(target, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" });
+    }
     ScrollTrigger.refresh();
   }
 
@@ -663,18 +981,25 @@
     });
   });
 
-  /* ---------- Mobile menu ---------- */
   const menuBtn = document.getElementById('menuBtn');
   const mobileMenu = document.getElementById('mobileMenu');
-  menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('open'));
+  menuBtn.addEventListener('click', () => {
+    mobileMenu.classList.toggle('open');
+    const spans = menuBtn.querySelectorAll('span');
+    if(mobileMenu.classList.contains('open')){
+      spans[0].style.transform = 'rotate(45deg) translateY(11px)';
+      spans[1].style.transform = 'rotate(-45deg) translateY(-11px)';
+    } else {
+      spans[0].style.transform = 'none';
+      spans[1].style.transform = 'none';
+    }
+  });
 
-  /* ---------- Scroll progress bar ---------- */
   gsap.to("#scrollProgress", {
     width: "100%", ease: "none",
     scrollTrigger: { trigger: document.body, start: "top top", end: "bottom bottom", scrub: 0.3 }
   });
 
-  /* ---------- Build dial ticks ---------- */
   const ticksGroup = document.getElementById('ticks');
   for(let i=0;i<=8;i++){
     const angle = -120 + (i*30);
@@ -691,62 +1016,58 @@
     ticksGroup.appendChild(tick);
   }
 
-  /* ---------- Page load intro ---------- */
   const tl = gsap.timeline();
-  tl.from("nav", { y: -100, opacity: 0, duration: 1, ease: "expo.out" })
-    .from("#mainCarBg", { scale: 1.4, opacity: 0, duration: 1.8, ease: "power4.out" }, "-=0.5")
-    .from("#mainCar", { scale: 1.08, opacity: 0, duration: 1.5, ease: "power3.out" }, "-=1.4")
-    .from("#bgText", { scale: 1.4, opacity: 0, duration: 2, ease: "expo.out" }, "-=1.4")
-    .from("#heroUI > *", { y: 40, opacity: 0, duration: 1, stagger: 0.12, ease: "power3.out" }, "-=1.2")
-    .from("#scrollLine", { scaleY: 0, duration: 0.6, ease: "power2.out" }, "-=0.4");
+  tl.from("nav", { y: -150, opacity: 0, duration: 1.4, ease: "back.out(1.5)" })
+    .from("#mainCarBg", { scale: 1.5, opacity: 0, duration: 2.2, ease: "expo.out", filter: "blur(30px)" }, "-=0.6")
+    .from("#mainCar", { scale: 1.15, opacity: 0, rotationY: 15, duration: 2, ease: "power3.out" }, "-=1.6")
+    .from("#bgText", { scale: 1.6, opacity: 0, duration: 2.4, ease: "expo.out" }, "-=1.8")
+    .from("#heroUI > *", { y: 60, opacity: 0, duration: 1.3, stagger: 0.18, ease: "back.out(1.3)" }, "-=1.6")
+    .from("#scrollLine", { scaleY: 0, duration: 1, ease: "power2.out" }, "-=0.6");
 
-  gsap.to("#scrollLine", { scaleY: 0.3, repeat: -1, yoyo: true, duration: 1.1, ease: "sine.inOut" });
+  gsap.to("#scrollLine", { scaleY: 0.4, repeat: -1, yoyo: true, duration: 1.4, ease: "sine.inOut" });
 
-  /* ---------- Mouse parallax on hero (desktop only, avoids jank on touch) ---------- */
   if (window.matchMedia("(hover: hover)").matches) {
     document.addEventListener("mousemove", (e) => {
-      const x = (e.clientX / window.innerWidth - 0.5) * 14;
-      const y = (e.clientY / window.innerHeight - 0.5) * 8;
-      gsap.to("#mainCar", { x: x, y: y, duration: 2, ease: "power2.out", overwrite: "auto" });
-      gsap.to("#mainCarBg", { x: x * 1.6, y: y * 1.6, duration: 2.4, ease: "power2.out", overwrite: "auto" });
-      gsap.to("#bgText", { x: -x * 1.5, y: -y * 1.5, duration: 3, ease: "power2.out", overwrite: "auto" });
+      const x = (e.clientX / window.innerWidth - 0.5) * 25;
+      const y = (e.clientY / window.innerHeight - 0.5) * 15;
+      gsap.to("#mainCar", { x: x, y: y, duration: 3, ease: "power2.out", overwrite: "auto" });
+      gsap.to("#mainCarBg", { x: x * 2, y: y * 2, duration: 3.5, ease: "power2.out", overwrite: "auto" });
+      gsap.to("#bgText", { x: -x * 2.2, y: -y * 2.2, duration: 4, ease: "power2.out", overwrite: "auto" });
     });
   }
 
-  /* ---------- Hero scroll parallax ---------- */
   gsap.to("#mainCarBg", {
     scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: 0.6 },
-    scale: 1.5, yPercent: 10, ease: "none"
+    scale: 1.8, yPercent: 20, ease: "none"
   });
   gsap.to("#mainCar", {
     scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: 0.6 },
-    yPercent: 6, opacity: 0.85, ease: "none"
+    yPercent: 10, opacity: 0.7, ease: "none"
   });
   gsap.to("#bgText", {
     scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: 0.6 },
-    yPercent: -30, opacity: 0, ease: "none"
+    yPercent: -50, opacity: 0, ease: "none"
   });
   gsap.to("#heroUI", {
     scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: 0.6 },
-    yPercent: 15, opacity: 0, ease: "none"
+    yPercent: 25, opacity: 0, ease: "none"
   });
 
-  /* ---------- Color configurator ---------- */
   const colorLabel = document.getElementById('colorLabel');
   document.querySelectorAll('.swatch').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.swatch').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       colorLabel.textContent = btn.dataset.name;
-      gsap.to("#mainCar", { duration: 0.15, onComplete: () => {
+      gsap.to("#mainCar", { duration: 0.2, onComplete: () => {
         const extra = btn.dataset.filter === 'none' ? '' : btn.dataset.filter;
         document.getElementById('mainCar').style.filter = `brightness(0.95) contrast(1.05) drop-shadow(0 40px 60px rgba(0,0,0,0.8)) ${extra}`;
         document.getElementById('mainCarBg').style.filter = `blur(55px) brightness(0.18) saturate(1.1) ${extra}`;
       }});
+      gsap.from(btn, { scale: 0.6, duration: 0.4, ease: "elastic.out(1.2, 0.75)" });
     });
   });
 
-  /* ---------- Trim comparison tabs ---------- */
   const trims = {
     carrera:  { engine:"Twin-turbocharged boxer 6", disp:"2,981 cm³", drive:"Rear-wheel drive", trans:"8-speed PDK", weight:"1,505 kg", price:"Rp 3.1 M" },
     carreraS: { engine:"Twin-turbocharged boxer 6", disp:"2,981 cm³", drive:"Rear-wheel drive", trans:"8-speed PDK", weight:"1,520 kg", price:"Rp 3.6 M" },
@@ -757,33 +1078,32 @@
     tab.addEventListener('click', () => {
       document.querySelectorAll('.trim-tab').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
+      gsap.from(tab, { scale: 0.85, duration: 0.3, ease: "elastic.out(1.3)" });
       const t = trims[tab.dataset.trim];
       const fields = [['specEngine','engine'],['specDisp','disp'],['specDrive','drive'],['specTrans','trans'],['specWeight','weight'],['specPrice','price']];
-      fields.forEach(([id,key]) => {
+      fields.forEach(([id,key], i) => {
         const el = document.getElementById(id);
-        gsap.to(el, { opacity: 0, duration: 0.15, onComplete: () => {
+        gsap.to(el, { opacity: 0, duration: 0.2, delay: i*0.06, onComplete: () => {
           el.textContent = t[key];
-          gsap.to(el, { opacity: 1, duration: 0.25 });
+          gsap.from(el, { opacity: 0, duration: 0.3 });
         }});
       });
     });
   });
 
-  /* ---------- Specs: staggered reveal + image wipe ---------- */
   gsap.from("#specs .trim-tab, #specs h3, #specs p.text-gray-400, #specs .spec-row", {
     scrollTrigger: { trigger: "#specs", start: "top 75%" },
-    y: 40, opacity: 0, duration: 0.9, stagger: 0.05, ease: "power3.out"
+    y: 60, opacity: 0, duration: 1.3, stagger: 0.09, ease: "back.out(1.2)"
   });
   gsap.to("#specImgWrap", {
     scrollTrigger: { trigger: "#specs", start: "top 70%" },
-    clipPath: "inset(0 0% 0 0)", duration: 1.3, ease: "power4.inOut"
+    clipPath: "inset(0 0% 0 0)", duration: 1.8, ease: "power4.inOut"
   });
   gsap.from("#specImgWrap", {
     scrollTrigger: { trigger: "#specs", start: "top 70%" },
-    scale: 1.15, duration: 1.4, ease: "power3.out"
+    scale: 1.25, duration: 1.8, ease: "power3.out"
   });
 
-  /* ---------- Number counters ---------- */
   document.querySelectorAll(".counter").forEach((el) => {
     const target = parseFloat(el.dataset.target);
     const decimals = parseInt(el.dataset.decimal || "0", 10);
@@ -792,27 +1112,25 @@
       trigger: el, start: "top 90%", once: true,
       onEnter: () => {
         gsap.to(proxy, {
-          val: target, duration: 1.6, ease: "power2.out",
+          val: target, duration: 2.4, ease: "power2.out",
           onUpdate: () => { el.textContent = proxy.val.toFixed(decimals); }
         });
       }
     });
   });
 
-  /* ---------- Dial section entrance ---------- */
   ScrollTrigger.create({
     trigger: "#dial", start: "top 70%",
     onEnter: () => {
-      gsap.from("#dial h3, #dial p.eyebrow, #dial p.text-gray-600", { y: 40, opacity: 0, duration: 1, stagger: 0.1, ease: "power3.out" });
-      gsap.from("#dialSvg", { scale: 0.7, opacity: 0, duration: 1.1, ease: "back.out(1.4)" });
-      gsap.from("#dial .grid > div", { y: 30, opacity: 0, duration: 0.8, stagger: 0.1, delay: 0.5, ease: "power3.out" });
-      gsap.to("#dialRing", { strokeDashoffset: 130, duration: 1.8, delay: 0.2, ease: "power3.inOut" });
-      gsap.from("#soundToggle", { y: 20, opacity: 0, duration: 0.8, delay: 0.6, ease: "power3.out" });
+      gsap.from("#dial h3, #dial p.eyebrow, #dial p.text-gray-600", { y: 60, opacity: 0, duration: 1.4, stagger: 0.15, ease: "back.out(1.3)" });
+      gsap.from("#dialSvg", { scale: 0.5, opacity: 0, duration: 1.6, ease: "back.out(1.7)" });
+      gsap.from("#dial .highlight-box", { y: 50, opacity: 0, duration: 1.2, stagger: 0.14, delay: 0.7, ease: "back.out(1.2)" });
+      gsap.to("#dialRing", { strokeDashoffset: 130, duration: 2.2, delay: 0.4, ease: "power3.inOut" });
+      gsap.from("#soundToggle", { y: 40, opacity: 0, duration: 1.2, delay: 1, ease: "back.out(1.2)" });
     },
     once: true
   });
 
-  /* ---------- Live RPM dial ---------- */
   const needleEl = document.getElementById("needle");
   const rpmValueEl = document.getElementById("rpmValue");
   const rpmStateEl = document.getElementById("rpmState");
@@ -837,7 +1155,7 @@
   const dialSvg = document.getElementById("dialSvg");
   function revUp(){
     idleLoop.pause();
-    gsap.to(rpmProxy, { deg: 95, duration: 1.2, ease: "power2.in", onUpdate: () => paintRpm(rpmProxy.deg) });
+    gsap.to(rpmProxy, { deg: 95, duration: 1, ease: "power2.in", onUpdate: () => paintRpm(rpmProxy.deg) });
   }
   function revDown(){
     gsap.to(rpmProxy, {
@@ -851,7 +1169,6 @@
   dialSvg.addEventListener("touchstart", revUp, { passive: true });
   dialSvg.addEventListener("touchend", revDown);
 
-  /* ---------- Simulated engine sound (Web Audio oscillator, no external file) ---------- */
   let audioCtx, osc, gainNode, audioOn = false;
   const soundToggle = document.getElementById('soundToggle');
   const soundIcon = document.getElementById('soundIcon');
@@ -885,44 +1202,151 @@
     }
   });
 
-  /* ---------- FAQ accordion ---------- */
-  document.querySelectorAll('.faq-q').forEach(q => {
+  /* ---- FAQ accordion — bound per-item so every page's questions open
+     independently and reliably ---- */
+  document.querySelectorAll('.faq-item').forEach(item => {
+    const q = item.querySelector('.faq-q');
+    const a = item.querySelector('.faq-a');
+    const icon = item.querySelector('.faq-icon');
     q.addEventListener('click', () => {
-      const a = q.nextElementSibling;
-      const icon = q.querySelector('.faq-icon');
       const isOpen = a.style.maxHeight && a.style.maxHeight !== "0px";
-      document.querySelectorAll('.faq-a').forEach(el => el.style.maxHeight = "0px");
-      document.querySelectorAll('.faq-icon').forEach(el => el.textContent = "+");
-      if (!isOpen) { a.style.maxHeight = a.scrollHeight + "px"; icon.textContent = "–"; }
+      const list = item.parentElement;
+      list.querySelectorAll('.faq-item').forEach(sib => {
+        if (sib !== item) {
+          sib.querySelector('.faq-a').style.maxHeight = "0px";
+          const sibIcon = sib.querySelector('.faq-icon');
+          sibIcon.textContent = "+";
+          sibIcon.style.transform = "none";
+        }
+      });
+      if (!isOpen) {
+        a.style.maxHeight = a.scrollHeight + "px";
+        icon.textContent = "–";
+        icon.style.transform = "rotate(180deg)";
+        gsap.from(a.querySelector('p'), { opacity: 0, y: -10, duration: 0.4, delay: 0.1 });
+      } else {
+        a.style.maxHeight = "0px";
+        icon.textContent = "+";
+        icon.style.transform = "none";
+      }
     });
   });
 
-  /* ---------- CTA glow pulse + entrance ---------- */
-  gsap.from("section:nth-last-of-type(2) h3, section:nth-last-of-type(2) button, section:nth-last-of-type(2) p.eyebrow", {
-    scrollTrigger: { trigger: "section:nth-last-of-type(2)", start: "top 80%" },
-    y: 40, opacity: 0, duration: 1, stagger: 0.12, ease: "power3.out"
+  /* ---- Scoped, once-only reveal for every FAQ section. The previous
+     version used a single greedy "section:nth-last-of-type(2)" selector
+     that unintentionally matched a section on EVERY page (911, 718,
+     Taycan, Panamera) as one shared animation. Because it also had no
+     "once" flag, scrolling back up past the 911 FAQ replayed it in
+     reverse and hid it, while the shared tween left the other pages'
+     FAQ headings/items stuck at opacity 0 since their own trigger
+     never entered view. Each FAQ section now gets its own scoped,
+     one-shot reveal keyed to its real id. ---- */
+  ['faq', 'faq-718', 'faq-taycan', 'faq-panamera'].forEach((sectionId) => {
+    const section = document.getElementById(sectionId);
+    if (!section) return;
+    const heading = section.querySelectorAll('p.eyebrow, h3');
+    const items = section.querySelectorAll('.faq-item');
+    gsap.set(heading, { opacity: 0, y: 40 });
+    gsap.set(items, { opacity: 0, y: 40 });
+    ScrollTrigger.create({
+      trigger: section,
+      start: "top 82%",
+      once: true,
+      onEnter: () => {
+        gsap.to(heading, { opacity: 1, y: 0, duration: 1, stagger: 0.12, ease: "back.out(1.2)" });
+        gsap.to(items, { opacity: 1, y: 0, duration: 0.9, stagger: 0.09, delay: 0.15, ease: "back.out(1.2)" });
+      }
+    });
+  });
+
+  /* ---- Entrance reveals for the 718 / Taycan / Panamera pages, which
+     previously had zero scroll-triggered animation of their own ---- */
+  ['718', 'taycan', 'panamera'].forEach((pageKey) => {
+    const root = document.getElementById('page-' + pageKey);
+    if (!root) return;
+    const sections = root.querySelectorAll(':scope > section');
+    const heroSection = sections[0];
+    const aboutSection = sections[1];
+
+    if (heroSection) {
+      const heroEls = heroSection.querySelectorAll('p.eyebrow, h1, p.text-gray-300');
+      gsap.set(heroEls, { opacity: 0, y: 50 });
+      ScrollTrigger.create({
+        trigger: heroSection, start: "top 65%", once: true,
+        onEnter: () => gsap.to(heroEls, { opacity: 1, y: 0, duration: 1.2, stagger: 0.15, ease: "back.out(1.2)" })
+      });
+    }
+
+    if (aboutSection) {
+      const textEls = aboutSection.querySelectorAll('p.eyebrow, h2, p.text-gray-400, .spec-row');
+      const imgEls = aboutSection.querySelectorAll('.img-slot');
+      gsap.set(textEls, { opacity: 0, y: 40 });
+      gsap.set(imgEls, { opacity: 0, scale: 0.92 });
+      ScrollTrigger.create({
+        trigger: aboutSection, start: "top 78%", once: true,
+        onEnter: () => {
+          gsap.to(textEls, { opacity: 1, y: 0, duration: 1, stagger: 0.08, ease: "back.out(1.2)" });
+          gsap.to(imgEls, { opacity: 1, scale: 1, duration: 1, stagger: 0.12, delay: 0.15, ease: "back.out(1.3)" });
+        }
+      });
+    }
+  });
+
+  /* ---- Extra interactivity: subtle 3D tilt on every gallery image, and
+     a light magnetic pull on buttons for hover-capable devices ---- */
+  if (window.matchMedia("(hover: hover)").matches) {
+    document.querySelectorAll('.img-slot').forEach(slot => {
+      const img = slot.querySelector('img');
+      if (!img) return;
+      slot.addEventListener('mousemove', (e) => {
+        const rect = slot.getBoundingClientRect();
+        const px = (e.clientX - rect.left) / rect.width - 0.5;
+        const py = (e.clientY - rect.top) / rect.height - 0.5;
+        gsap.to(img, { rotateX: -py * 10, rotateY: px * 10, duration: 0.5, ease: "power2.out", transformPerspective: 700, overwrite: "auto" });
+      });
+      slot.addEventListener('mouseleave', () => {
+        gsap.to(img, { rotateX: 0, rotateY: 0, duration: 0.7, ease: "power2.out" });
+      });
+    });
+
+    document.querySelectorAll('.btn-primary, .btn-ghost').forEach(btn => {
+      btn.addEventListener('mousemove', (e) => {
+        const r = btn.getBoundingClientRect();
+        const x = e.clientX - r.left - r.width / 2;
+        const y = e.clientY - r.top - r.height / 2;
+        gsap.to(btn, { x: x * 0.15, y: y * 0.35, duration: 0.3, ease: "power2.out", overwrite: "auto" });
+      });
+      btn.addEventListener('mouseleave', () => {
+        gsap.to(btn, { x: 0, y: 0, duration: 0.6, ease: "elastic.out(1, 0.4)" });
+      });
+    });
+  }
+
+  gsap.from("#page-911 section:last-of-type h3, #page-911 section:last-of-type button, #page-911 section:last-of-type p.eyebrow", {
+    scrollTrigger: { trigger: "#page-911 section:last-of-type", start: "top 80%" },
+    y: 60, opacity: 0, duration: 1.4, stagger: 0.18, ease: "back.out(1.3)"
   });
   gsap.to("#ctaGlow", {
     scrollTrigger: { trigger: "#ctaGlow", start: "top 80%" },
-    scale: 1.3, opacity: 0.3, duration: 2, repeat: -1, yoyo: true, ease: "sine.inOut"
+    scale: 1.8, opacity: 0.5, duration: 3, repeat: -1, yoyo: true, ease: "sine.inOut"
   });
 
   gsap.utils.toArray("footer").forEach(f => {
     gsap.from(f, {
       scrollTrigger: { trigger: f, start: "top 95%" },
-      y: 20, opacity: 0, duration: 0.8, ease: "power3.out"
+      y: 40, opacity: 0, duration: 1.2, ease: "back.out(1.2)"
     });
   });
 
-  /* ---------- Floating sticky CTA appears after leaving hero (911 page only) ---------- */
-  ScrollTrigger.create({
-    trigger: "#hero",
-    start: "bottom top",
-    onEnter: () => document.getElementById('floatCta').classList.add('show'),
-    onLeaveBack: () => document.getElementById('floatCta').classList.remove('show')
+  /* ---- Floating configurator CTA now uses a plain scroll-position
+     check instead of a ScrollTrigger tied only to the 911 page's
+     #hero — that way it behaves the same on every page ---- */
+  window.addEventListener('scroll', () => {
+    const cta = document.getElementById('floatCta');
+    if (window.scrollY > 500) cta.classList.add('show');
+    else cta.classList.remove('show');
   });
 
-  /* ---------- Init: start on 911 ---------- */
   showPage('911');
 </script>
 </body>
